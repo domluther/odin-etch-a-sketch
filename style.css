@@ -34,12 +34,13 @@ body {
 
   /* Makes grow horizontally*/
   flex-grow: 1;
+  /* Makes them stay squares*/
+  aspect-ratio: 1/1;
+  max-width: 1500px;
 }
 
 .pixel {
   background-color: lightcoral;
-  /* Makes them stay squares*/
-  aspect-ratio: 1/1;
 }
 
 .button {
