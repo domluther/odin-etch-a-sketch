@@ -1,6 +1,7 @@
 const mainContainerEle = document.querySelector(".mainContainer");
-const settingsContainerEle = document.querySelector(".settings");
-const sizeSetterEle = document.querySelector("#size");
+const colourModesContainer = document.querySelector(".colourModes");
+const otherSettingsContainer = document.querySelector(".otherSettings");
+const gridSizeSetterEle = document.querySelector("#gridSizeInput");
 
 // Track app state / settings
 const state = {
@@ -8,6 +9,9 @@ const state = {
   mode: "black",
   gridSize: 5,
   border: false,
+  lastEle: undefined,
+  minSize: 1,
+  maxSize: 100,
 };
 
 const randomBetween = (min, max) =>
@@ -28,24 +32,32 @@ const generateRandomRGB = function () {
   return (rgb = `rgb(${r},${g},${b})`); // Collect all to a css color string
 };
 
+/* Core functionality */
+
 // Draw the original layout grid
-const drawPixelsHTML = function () {
+const drawPixels = function (mode = "standard") {
   const pixelsPerSide = state.gridSize;
-  mainContainerEle.innerHTML = ""; // Could use a while loop but faster as no event listeners
-  const pixelHTML = `<div class="pixel" style="width: ${
+  // Could use a while loop but faster as no event listeners
+  mainContainerEle.innerHTML = "";
+
+  let pixelHTML = `<div class="pixel" style="width: ${
     100 / pixelsPerSide
   }%; background-color: white;"></div>`;
-  // Alternate - create an array of strings and forEach through it
+
   for (let i = 0; i < pixelsPerSide * pixelsPerSide; i++) {
-    // Mosaic mode - generates random pixels
-    // const pixelHTML = `<div class="pixel" style="width: ${
-    //   100 / pixelsPerSide
-    // }%; background-color: ${generateRandomRGB(pixelsPerSide)};"></div>`;
+    // DRY
+    if (mode === "mosaic") {
+      pixelHTML = `<div class="pixel" style="width: ${
+        100 / pixelsPerSide
+      }%; background-color: ${generateRandomRGB(pixelsPerSide)};"></div>`;
+    }
 
     mainContainerEle.insertAdjacentHTML("beforeend", pixelHTML);
   }
+  if (state.border) drawBorders();
 };
 
+/* Border logic */
 const toggleBorder = function () {
   state.border = !state.border;
   if (state.border) drawBorders();
@@ -62,20 +74,9 @@ const removeBorders = function () {
   pixels.forEach((pixel) => pixel.classList.remove("bordered"));
 };
 
-const drawPixelsHTMLRandom = function () {
-  const pixelsPerSide = state.gridSize;
-  mainContainerEle.innerHTML = ""; // Could use a while loop but faster as no event listeners
-  for (let i = 0; i < pixelsPerSide * pixelsPerSide; i++) {
-    // Mosaic mode - generates random pixels
-    const pixelHTML = `<div class="pixel" style="width: ${
-      100 / pixelsPerSide
-    }%; background-color: ${generateRandomRGB(pixelsPerSide)};"></div>`;
-    mainContainerEle.insertAdjacentHTML("beforeend", pixelHTML);
-  }
-  if (state.border) drawBorders();
-};
+/* Event listeners */
 
-// Only want mouse move to trigger if the mouse is down - ie drag mouse
+// Used to allow for click + drag instead of just mouse over.
 mainContainerEle.addEventListener("mousedown", function (e) {
   state.mouseDown = true;
 });
@@ -84,29 +85,38 @@ mainContainerEle.addEventListener("mouseup", function (e) {
   state.mouseDown = false;
 });
 
+// Colour pixels if mouse down and it's a new pixel
 mainContainerEle.addEventListener("mousemove", function (e) {
   const pixel = e.target.closest(".pixel");
-  // Could combine into a NAND but this is clearer guard clause?
+  // I find this cleaner than a NAND
   if (!pixel) return;
   if (!state.mouseDown) return;
 
-  // Only change the colour if you've clicked on a pixel AND the mouse is down
+  // Keep track of last element - stops recolouring same pixel
+  if (e.target === state.lastEle) return;
+  state.lastEle = e.target;
   pixel.style.backgroundColor = generateRGB();
 });
 
-// TODO Separate so different for colour and function
-settingsContainerEle.addEventListener("click", function (e) {
+colourModesContainer.addEventListener("click", function (e) {
+  const btn = e.target.closest(".button");
+  if (!btn) return;
+
+  state.mode = e.target.dataset.mode;
+});
+
+otherSettingsContainer.addEventListener("click", function (e) {
   const btn = e.target.closest(".button");
   if (!btn) return;
 
   if (e.target.dataset.mode === "magic") {
-    drawPixelsHTMLRandom();
+    drawPixels("mosaic");
     return;
   }
 
   if (e.target.dataset.mode === "reset") {
     state.border = false;
-    drawPixelsHTML();
+    drawPixels();
     return;
   }
 
@@ -114,27 +124,25 @@ settingsContainerEle.addEventListener("click", function (e) {
     toggleBorder();
     return;
   }
-
-  state.mode = e.target.dataset.mode;
 });
 
-sizeSetterEle.addEventListener("change", function (e) {
-  console.log(e);
+gridSizeSetterEle.addEventListener("change", function (e) {
+  // Don't refresh page on submit
   e.preventDefault();
-  state.gridSize = e.target.value <= 100 ? e.target.value : 100;
-  sizeSetterEle.value = state.gridSize;
-  drawPixelsHTML();
+  // Data validation - an integer in range min <= x => max size.
+  let desiredValue = Math.floor(e.target.value);
+
+  if (desiredValue <= 1) desiredValue = state.minSize;
+  if (desiredValue > state.maxSize) desiredValue = state.maxSize;
+
+  state.gridSize = desiredValue;
+  gridSizeSetterEle.value = state.gridSize;
+  drawPixels();
 });
 
-sizeSetterEle.addEventListener("submit", function (e) {
-  console.log(e);
-  e.preventDefault();
-  drawPixelsHTML(e.target.value);
-});
+drawPixels();
 
-drawPixelsHTML();
-
-//  Mobile friendly
+//  Mobile friendly - Doesn't work on my phone
 // Only want mouse move to trigger if the mouse is down - ie drag mouse
 mainContainerEle.addEventListener("touchstart", function (e) {
   state.mouseDown = true;

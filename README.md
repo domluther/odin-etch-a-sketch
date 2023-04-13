@@ -17,6 +17,13 @@ https://www.theodinproject.com/lessons/foundations-etch-a-sketch
 - Reset image to clear it again
 - Size restarting
 
-# TODO
+# Part 3
 
-- Currently changes the pixel each time the mouse moves - how can I set it so it just does one per pixel? challenge - only one event listener not one per pixel
+- Fixed bug where same pixel changed colour multiple times
+- Made container size responsive
+
+## Future
+
+- Could add a progressive greyscale mode - would involve getting current pixel colour and then adding to it
+- Rainbow mode which goes R -> O -> Y -> G -> B -> I -> V in turn
+- Colour picker instead of just black pen mode

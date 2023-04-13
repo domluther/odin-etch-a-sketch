@@ -10,38 +10,48 @@
     <h1>Etch-a-sketch 📱</h1>
 
     <div class="settings">
-      <a class="button" data-mode="black" title="black mode - black pen">⬛️</a>
-      <a
-        class="button"
-        data-mode="rainbow"
-        title="rainbow mode - random colours"
-        >🌈</a
-      >
+      <div class="colourModes">
+        <a class="button" data-mode="black" title="black mode - black pen"
+          >⬛️</a
+        >
+        <a
+          class="button"
+          data-mode="rainbow"
+          title="rainbow mode - random colours"
+          >🌈</a
+        >
 
-      <a class="button" data-mode="border" title="border mode - toggle border"
-        >◫</a
-      >
+        <a class="button" data-mode="eraser" title="eraser mode - white pen"
+          >✏️</a
+        >
+      </div>
+      <div class="otherSettings">
+        <a class="button" data-mode="border" title="border mode - toggle border"
+          >◫</a
+        >
 
-      <a class="button" data-mode="eraser" title="eraser mode - white pen"
-        >✏️</a
-      >
-      <a class="button" data-mode="magic" title="magic mode - randomly generate"
-        >🪄</a
-      >
-      <a class="button" data-mode="reset" title="reset image">🔄</a>
-      <label for="size">Size</label>
-      <input
-        type="number"
-        name="size"
-        id="size"
-        min="1"
-        max="100"
-        step="1"
-        value="5"
-        title="adjust grid size"
-      />
+        <a
+          class="button"
+          data-mode="magic"
+          title="magic mode - randomly generate"
+          >🪄</a
+        >
+        <a class="button" data-mode="reset" title="reset image">🔄</a>
+        <div class="gridSize">
+          <label for="size">Grid size</label>
+          <input
+            type="number"
+            name="size"
+            id="gridSizeInput"
+            min="1"
+            max="100"
+            step="1"
+            value="5"
+            title="adjust grid size"
+          />
+        </div>
+      </div>
     </div>
-
     <!-- Container to hold the pixels -->
     <div class="mainContainer"></div>
   </body>
