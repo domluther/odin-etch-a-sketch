@@ -133,3 +133,23 @@ sizeSetterEle.addEventListener("submit", function (e) {
 });
 
 drawPixelsHTML();
+
+//  Mobile friendly
+// Only want mouse move to trigger if the mouse is down - ie drag mouse
+mainContainerEle.addEventListener("touchstart", function (e) {
+  state.mouseDown = true;
+});
+
+mainContainerEle.addEventListener("touchend", function (e) {
+  state.mouseDown = false;
+});
+
+mainContainerEle.addEventListener("touchmove", function (e) {
+  const pixel = e.target.closest(".pixel");
+  // Could combine into a NAND but this is clearer guard clause?
+  if (!pixel) return;
+  if (!state.mouseDown) return;
+
+  // Only change the colour if you've clicked on a pixel AND the mouse is down
+  pixel.style.backgroundColor = generateRGB();
+});
