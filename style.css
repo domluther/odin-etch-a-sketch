@@ -1,0 +1,23 @@
+* {
+  padding: 0px;
+  margin: 0x;
+  box-sizing: border-box;
+}
+
+.mainContainer {
+  display: flex;
+  flex-wrap: wrap;
+  width: 480px;
+  height: 480px;
+  background-color: yellow;
+  border: 2px black solid;
+  justify-content: center;
+  text-align: center;
+}
+
+.pixel {
+  flex-grow: 1;
+  background-color: lightcoral;
+  width: 20%;
+  /* border: 1px black solid; */
+}
