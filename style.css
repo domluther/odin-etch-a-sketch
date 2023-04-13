@@ -50,3 +50,7 @@
   margin: 10px;
   border: 2px black solid;
 }
+
+.bordered {
+  border: 2px black solid;
+}

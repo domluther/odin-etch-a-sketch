@@ -7,6 +7,7 @@ const state = {
   mouseDown: false,
   mode: "black",
   gridSize: 5,
+  border: false,
 };
 
 const randomBetween = (min, max) =>
@@ -45,9 +46,24 @@ const drawPixelsHTML = function () {
   }
 };
 
+const toggleBorder = function () {
+  state.border = !state.border;
+  if (state.border) drawBorders();
+  else removeBorders();
+};
+
+const drawBorders = function () {
+  const pixels = document.querySelectorAll(".pixel");
+  pixels.forEach((pixel) => pixel.classList.add("bordered"));
+};
+
+const removeBorders = function () {
+  const pixels = document.querySelectorAll(".pixel");
+  pixels.forEach((pixel) => pixel.classList.remove("bordered"));
+};
+
 const drawPixelsHTMLRandom = function () {
   const pixelsPerSide = state.gridSize;
-  console.log("random mode");
   mainContainerEle.innerHTML = ""; // Could use a while loop but faster as no event listeners
   for (let i = 0; i < pixelsPerSide * pixelsPerSide; i++) {
     // Mosaic mode - generates random pixels
@@ -56,6 +72,7 @@ const drawPixelsHTMLRandom = function () {
     }%; background-color: ${generateRandomRGB(pixelsPerSide)};"></div>`;
     mainContainerEle.insertAdjacentHTML("beforeend", pixelHTML);
   }
+  if (state.border) drawBorders();
 };
 
 // Only want mouse move to trigger if the mouse is down - ie drag mouse
@@ -77,6 +94,7 @@ mainContainerEle.addEventListener("mousemove", function (e) {
   pixel.style.backgroundColor = generateRGB();
 });
 
+// TODO Separate so different for colour and function
 settingsContainerEle.addEventListener("click", function (e) {
   const btn = e.target.closest(".button");
   if (!btn) return;
@@ -87,9 +105,16 @@ settingsContainerEle.addEventListener("click", function (e) {
   }
 
   if (e.target.dataset.mode === "reset") {
+    state.border = false;
     drawPixelsHTML();
     return;
   }
+
+  if (e.target.dataset.mode === "border") {
+    toggleBorder();
+    return;
+  }
+
   state.mode = e.target.dataset.mode;
 });
 
@@ -106,4 +131,5 @@ sizeSetterEle.addEventListener("submit", function (e) {
   e.preventDefault();
   drawPixelsHTML(e.target.value);
 });
+
 drawPixelsHTML();
